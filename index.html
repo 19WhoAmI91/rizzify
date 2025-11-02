@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rizzify – Your AI Wingman</title>
+  <meta name="description" content="Rizzify helps you craft smooth, funny or flirty texts for dating apps and DMs." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#0b0b0f; --card:#12131a; --muted:#aab; --text:#e9ecf1; --brand:#7c5cff; --brand-2:#00e6a8; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; height:100%; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: radial-gradient(1200px 800px at 20% -10%, #1a1440 0%, #0b0b0f 50%) fixed; color:var(--text); }
+    .wrap { max-width:900px; margin:0 auto; padding:32px 16px 80px; }
+    .hero { display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; }
+    .title { font-size: clamp(28px, 5vw, 44px); font-weight:800; letter-spacing:-0.02em; }
+    .subtitle { color:var(--muted); max-width:560px; }
+    .badge { display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px; background:linear-gradient(90deg, rgba(124,92,255,.2), rgba(0,230,168,.2)); font-weight:600; }
+    .grid { display:grid; grid-template-columns:1fr; gap:16px; margin-top:24px; }
+    @media(min-width:920px){ .grid { grid-template-columns: 1.1fr .9fr; } }
+    .card { background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .label { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; }
+    textarea, input, select { width:100%; background:#0f1016; color:var(--text); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px 12px; outline:none; font: inherit; }
+    textarea { min-height:120px; resize:vertical; }
+    button { appearance:none; border:0; background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:#071013; font-weight:800; padding:14px 18px; border-radius:14px; cursor:pointer; box-shadow:0 8px 20px rgba(124,92,255,.35); }
+    button[disabled] { opacity:.6; cursor:not-allowed; box-shadow:none; }
+    .row { display:flex; gap:12px; align-items:center; }
+    .result { white-space:pre-wrap; background:#0f1016; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px; }
+    .pill { border:1px solid rgba(255,255,255,.12); padding:8px 12px; border-radius:999px; cursor:pointer; color:var(--muted); }
+    .pill.active { border-color:var(--brand-2); color:var(--text); }
+    .hint { color:var(--muted); font-size:12px; }
+    .footer { opacity:.7; font-size:12px; text-align:center; margin-top:28px; }
+    .copy { background:#1b1c26; color:#dfe5ff; font-weight:700; }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:12px; color:#cfe; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    .logo { font-weight:900; letter-spacing:-.02em; font-size:20px; }
+    .small { font-size:12px; color:var(--muted); }
+    .sep { height:1px; background:linear-gradient(90deg, rgba(124,92,255,.2), rgba(0,230,168,.2)); margin:8px 0 16px; border-radius:999px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo">💬 Rizzify</div>
+      <div class="small">3 free rizz / day · <span id="quotaLeft">3</span> left</div>
+    </div>
+    <div class="hero">
+      <div>
+        <div class="badge">😏 Your AI Wingman</div>
+        <div class="title">Craft flirty, funny, or smooth messages in seconds.</div>
+        <p class="subtitle">Tell Rizzify who you’re texting and the vibe. Get 3 ready-to-send openers or replies.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+          <span class="pill active" data-vibe="funny">Funny</span>
+          <span class="pill" data-vibe="romantic">Romantic</span>
+          <span class="pill" data-vibe="smooth">Smooth</span>
+          <span class="pill" data-vibe="playful">Playful</span>
+          <span class="pill" data-vibe="bold">Bold</span>
+          <span class="pill" data-vibe="cute">Cute</span>
+        </div>
+
+        <label class="label" for="who">Who are you texting?</label>
+        <input id="who" placeholder="e.g., Tinder match who likes dogs" />
+
+        <div style="height:12px"></div>
+        <label class="label" for="situation">What’s the situation / message you’re replying to?</label>
+        <textarea id="situation" placeholder="Paste what they said or describe the context..."></textarea>
+
+        <div style="height:12px"></div>
+        <label class="label" for="style">Extras (optional)</label>
+        <input id="style" placeholder="e.g., 1 or 2 emojis max, keep it clean" />
+
+        <div style="height:14px"></div>
+        <div class="row">
+          <button id="generateBtn">✨ Generate Rizz</button>
+          <button id="regenBtn" disabled>🔁 Regenerate</button>
+          <button id="unlockBtn" class="copy" title="Enter premium code to unlock unlimited">🔓 Unlock</button>
+        </div>
+        <div class="hint">Free: 3 per day. Premium: unlimited (use your Gumroad code).</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Your results</div>
+        <div id="results"></div>
+      </div>
+    </div>
+
+    <div class="footer">Made with ❤️ by Rizzify · <span class="code">v0.1-analytics</span>
+      <div class="sep"></div>
+      <div class="small">Tip: best results when you include what they said and pick a vibe.</div>
+    </div>
+  </div>
+
+  <!-- Basic analytics: Splitbee (free). Tracks pageviews automatically. -->
+  <script async src="https://cdn.splitbee.io/sb.js"></script>
+
+  <script>
+    // ===== Simple free tier & premium unlock (client-side) =====
+    const FREE_LIMIT = 3; // per day
+    const PREMIUM_UNLOCK_CODE = "YOUR-GUMROAD-CODE-HERE"; // replace with a code you send buyers
+
+    function todayKey(){
+      const d = new Date();
+      return `rizzify-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    }
+
+    function getUsage(){
+      try{ return JSON.parse(localStorage.getItem(todayKey()) || "0"); } catch{ return 0; }
+    }
+    function addUsage(){ localStorage.setItem(todayKey(), JSON.stringify(getUsage()+1)); }
+
+    function isPremium(){ return localStorage.getItem("rizzify-premium") === "1"; }
+    function setPremium(v){ localStorage.setItem("rizzify-premium", v ? "1" : "0"); updateQuota(); }
+
+    function updateQuota(){
+      const quota = document.getElementById('quotaLeft');
+      if(isPremium()) { quota.textContent = '∞'; return; }
+      const used = getUsage();
+      quota.textContent = Math.max(0, FREE_LIMIT - used);
+    }
+
+    // ===== UI logic =====
+    const who = document.getElementById('who');
+    const situation = document.getElementById('situation');
+    const style = document.getElementById('style');
+    const results = document.getElementById('results');
+    const generateBtn = document.getElementById('generateBtn');
+    const regenBtn = document.getElementById('regenBtn');
+
+    let vibe = 'funny';
+    let lastPayload = null;
+
+    document.querySelectorAll('.pill').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        vibe = p.getAttribute('data-vibe');
+      });
+    });
+
+    function msgTemplate(text){
+      const wrap = document.createElement('div');
+      wrap.style.marginTop = '12px';
+      const box = document.createElement('div');
+      box.className = 'result';
+      box.textContent = text;
+
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style.marginTop = '8px';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      copyBtn.className = 'copy';
+      copyBtn.addEventListener('click', async ()=>{
+        await navigator.clipboard.writeText(text);
+        if (window.splitbee) splitbee.track('CopySuggestion');
+        copyBtn.textContent = 'Copied!';
+        setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+      });
+
+      row.appendChild(copyBtn);
+      wrap.appendChild(box);
+      wrap.appendChild(row);
+      return wrap;
+    }
+
+    async function generate(payload){
+      results.innerHTML = '<div class="hint">Thinking of smooth lines…</div>';
+      generateBtn.disabled = true; regenBtn.disabled = true;
+      try{
+        const res = await fetch('/api/generate', {
+          method:'POST', headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok){ throw new Error('Server error'); }
+        const data = await res.json();
+        results.innerHTML = '';
+        (data.ideas || []).forEach(t => results.appendChild(msgTemplate(t)));
+        if (window.splitbee) splitbee.track('GenerateRizz', { vibe: payload.vibe });
+        regenBtn.disabled = false;
+      } catch(err){
+        results.innerHTML = '<div class="hint">Something went wrong. Try again in a moment.</div>';
+        if (window.splitbee) splitbee.track('GenerateError');
+        console.error(err);
+      } finally {
+        generateBtn.disabled = false;
+      }
+    }
+
+    generateBtn.addEventListener('click', async () => {
+      if(!isPremium() && getUsage() >= FREE_LIMIT){
+        alert('Free limit reached for today. Tap Unlock to go unlimited.');
+        if (window.splitbee) splitbee.track('HitFreeLimit');
+        return;
+      }
+      const payload = {
+        who: who.value.trim(),
+        situation: situation.value.trim(),
+        vibe,
+        style: style.value.trim()
+      };
+      lastPayload = payload; // allow regenerate
+      if(!isPremium()) addUsage();
+      updateQuota();
+      await generate(payload);
+    });
+
+    regenBtn.addEventListener('click', async () => {
+      if(!lastPayload) return;
+      if (window.splitbee) splitbee.track('Regenerate');
+      await generate(lastPayload);
+    });
+
+    document.getElementById('unlockBtn').addEventListener('click', ()=>{
+      const code = prompt('Enter your premium unlock code');
+      if(!code) return;
+      const ok = code.trim() === PREMIUM_UNLOCK_CODE;
+      if(ok){ setPremium(true); alert('Unlocked! Enjoy unlimited rizz.'); }
+      else { alert('Wrong code, try again.'); }
+      if (window.splitbee) splitbee.track('UnlockAttempt', { success: ok });
+    });
+
+    updateQuota();
+  </script>
+</body>
+</html>
